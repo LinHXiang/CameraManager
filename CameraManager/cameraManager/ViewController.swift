@@ -7,14 +7,16 @@
 //
 
 import UIKit
+import AVFoundation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController,AVCaptureMetadataOutputObjectsDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         CameraManager.shareInstance?.cameraSetting(persistenceKey: "testCamera" , setting: { (set) in
             set.setCamera(.back)
+            set.setScanQrcode(scanSize: self.view.frame, metadataDelegate: self)
             set.setPreviewLayer(inView: self.view)
         })
         
@@ -30,6 +32,17 @@ class ViewController: UIViewController {
         }
     }
 
+    
+    func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection){
+        
+        for objc in metadataObjects {
+            if let object = (objc as? AVMetadataMachineReadableCodeObject)?.stringValue{
+                print(object)
+            }
+        }
+        
+        
+    }
 
 }
 

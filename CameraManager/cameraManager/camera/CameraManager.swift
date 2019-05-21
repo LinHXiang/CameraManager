@@ -39,6 +39,8 @@ class CameraManager {
         }
     }
     
+    
+    
     public class func checkDeviceCamera(types:[deviceType]) ->CameraManager?{
         if types.contains(.video){
             let captureDevices = AVCaptureDevice.devices(for: AVMediaType.video)
