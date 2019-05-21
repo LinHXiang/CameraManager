@@ -12,7 +12,22 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        CameraManager.shareInstance?.cameraSetting(persistenceKey: "testCamera" , setting: { (set) in
+            set.setCamera(.back)
+            set.setPreviewLayer(inView: self.view)
+        })
+        
+        
+        
+        
+        if CameraManager.shareInstance?.getCameraSet(key: "testCamera") == nil {
+            print("nil")
+        }else{
+            print("已经存储")
+            print(CameraManager.shareInstance?.getCameraSet(key: "testCamera"))
+
+        }
     }
 
 

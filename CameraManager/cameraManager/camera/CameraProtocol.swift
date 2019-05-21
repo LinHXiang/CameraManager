@@ -6,9 +6,8 @@
 //  Copyright © 2019 林浩翔. All rights reserved.
 //
 
-protocol camera_FinishSetting {
+protocol Camera_FinishSetting {
     
-    func finishSetUpAndStartRunning() -> camera_FinishSetting
+    func saveCameraSet(key:String,set:CameraSet)
     
-    func stopRunning()
 }
