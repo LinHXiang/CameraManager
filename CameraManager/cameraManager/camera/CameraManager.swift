@@ -22,14 +22,6 @@ class CameraManager {
     
     fileprivate var sets:[String:CameraSet] = [String:CameraSet]()
     
-    public func saveCameraSet(key:String,set:CameraSet){
-        self.sets[key] = set
-    }
-    
-    func getCameraSet(key:String)->CameraSet?{
-        return self.sets[key]
-    }
-    
     func cameraSetting(persistenceKey : String? = nil ,setting : @escaping (CameraSet) -> Void){
         var set = CameraSet()
         if let key = persistenceKey , let keySet = getCameraSet(key: key) {
@@ -38,17 +30,41 @@ class CameraManager {
             set.stopRunning()
         }
         setting(set)
-        set.startRunning()
         if let key = persistenceKey , getCameraSet(key: key) == nil{
             saveCameraSet(key: key, set: set)
         }
     }
     
+    class func cameraSetting(setting : @escaping (CameraSet) -> Void)->CameraSet{
+        let set = CameraSet()
+        setting(set)
+        return set
+    }
+    
+    func startRunning(persistenceKey : String){
+        if let set = getCameraSet(key: persistenceKey){
+            set.startRunning()
+        }
+    }
+    
+    func stopRunning(persistenceKey : String){
+        if let set = getCameraSet(key: persistenceKey){
+            set.stopRunning()
+        }
+    }
 }
 
 
 
 extension CameraManager {
+    
+    public func saveCameraSet(key:String,set:CameraSet){
+        self.sets[key] = set
+    }
+    
+    func getCameraSet(key:String)->CameraSet?{
+        return self.sets[key]
+    }
     
     public class func checkDeviceCamera(types:[deviceType]) ->CameraManager?{
         if types.contains(.video){

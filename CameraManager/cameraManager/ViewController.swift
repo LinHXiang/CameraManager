@@ -14,7 +14,13 @@ class ViewController: UIViewController,AVCaptureMetadataOutputObjectsDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setface()
+        let set = CameraManager.cameraSetting { (set) in
+            set.setCamera(.front)
+            set.setMetadataScan(metadataObjectTypes: [.face], metadataDelegate: self)
+            set.setPreviewLayer(inView: self.view)
+        }
+        
+        set.startRunning()
         
     }
 
@@ -30,7 +36,7 @@ class ViewController: UIViewController,AVCaptureMetadataOutputObjectsDelegate {
     
     func setface(){
         CameraManager.shareInstance?.cameraSetting(persistenceKey: "qrcode", setting: { (set) in
-            set.setCamera(.back)
+            set.setCamera(.front)
             set.setMetadataScan(metadataObjectTypes: [.face], metadataDelegate: self)
             set.setPreviewLayer(inView: self.view)
         })
@@ -40,11 +46,18 @@ class ViewController: UIViewController,AVCaptureMetadataOutputObjectsDelegate {
     
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection){
         
-        for objc in metadataObjects {
-            if let object = (objc as? AVMetadataMachineReadableCodeObject)?.stringValue{
-                print(object)
-            }
+        if let faces = metadataObjects as? [AVMetadataFaceObject] {
+            print("\(faces.count)个人头")
         }
+        
+//        for objc in metadataObjects {
+//            
+//            
+//            if let object = (objc as? AVMetadataFaceObject){
+//                print("一个人头")
+//            }
+//            
+//        }
         
         
     }

@@ -33,7 +33,6 @@ class CameraSet {
     
     func stopRunning(){
         self.session.stopRunning()
-        previewLayer.removeFromSuperlayer()
     }
     
     //设置前后摄像头
@@ -56,12 +55,16 @@ class CameraSet {
     }
     
     func setPhotoOutPut(outPutSetting : ((AVCaptureStillImageOutput) -> Void)? = nil){
-        session.addOutput(photoOutput)
+        if session.canAddOutput(photoOutput) {
+            session.addOutput(photoOutput)
+        }
         outPutSetting?(photoOutput)
     }
     
-    func setVideoOutPut(videoDataOutputDelegate:AVCaptureVideoDataOutputSampleBufferDelegate,outPutSetting : ((AVCaptureVideoDataOutput) -> Void)? = nil){
-        session.addOutput(videoOutPut)
+    func setVideoOutPut(videoDataOutputDelegate:AVCaptureVideoDataOutputSampleBufferDelegate?,outPutSetting : ((AVCaptureVideoDataOutput) -> Void)? = nil){
+        if session.canAddOutput(videoOutPut) {
+            session.addOutput(videoOutPut)
+        }
         videoOutPut.setSampleBufferDelegate(videoDataOutputDelegate, queue: queue)
         outPutSetting?(videoOutPut)
     }
@@ -88,10 +91,10 @@ class CameraSet {
     
     
     //设置实时预览画面
-    func setPreviewLayer(inView : UIView){
+    func setPreviewLayer(inView : UIView,layerFrame:CGRect? = nil ,videoGravity:AVLayerVideoGravity = .resizeAspectFill){
         previewLayer.session = self.session
-        previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-        previewLayer.frame = inView.bounds
+        previewLayer.videoGravity = videoGravity
+        previewLayer.frame = layerFrame ?? inView.bounds
         inView.layer.insertSublayer(previewLayer, at: 0)
     }
     
