@@ -21,12 +21,23 @@ class CameraSet {
 
     public let videoOutPut = AVCaptureVideoDataOutput()
 
-    public let qrCodeOutput = AVCaptureMetadataOutput()
+    public let metadataOutput = AVCaptureMetadataOutput()
 
     public let previewLayer = AVCaptureVideoPreviewLayer()
+    
+    var queue = DispatchQueue(label: "cameraManager_default")
 
+    func startRunning(){
+        self.session.startRunning()
+    }
+    
+    func stopRunning(){
+        self.session.stopRunning()
+        previewLayer.removeFromSuperlayer()
+    }
+    
     //设置前后摄像头
-    func setCamera(_ position:AVCaptureDevice.Position){
+    func setCamera(_ position:AVCaptureDevice.Position , deviceSetting:((AVCaptureDevice)->Void)? = nil){
         for device in AVCaptureDevice.devices(for: AVMediaType.video) {
             if device.position == position {
                 videoDevice = device
@@ -40,27 +51,39 @@ class CameraSet {
             }catch{
                 print(error)
             }
+            deviceSetting?(device)
         }
     }
     
+    func setPhotoOutPut(outPutSetting : ((AVCaptureStillImageOutput) -> Void)? = nil){
+        session.addOutput(photoOutput)
+        outPutSetting?(photoOutput)
+    }
     
-    //设置二维码扫码功能
-    func setScanQrcode(scanSize:CGRect, metadataDelegate:AVCaptureMetadataOutputObjectsDelegate){
-        qrCodeOutput.setMetadataObjectsDelegate(metadataDelegate, queue: DispatchQueue.main)
-        session.addOutput(qrCodeOutput)
-        qrCodeOutput.metadataObjectTypes = [AVMetadataObject.ObjectType.qr]
+    func setVideoOutPut(videoDataOutputDelegate:AVCaptureVideoDataOutputSampleBufferDelegate,outPutSetting : ((AVCaptureVideoDataOutput) -> Void)? = nil){
+        session.addOutput(videoOutPut)
+        videoOutPut.setSampleBufferDelegate(videoDataOutputDelegate, queue: queue)
+        outPutSetting?(videoOutPut)
+    }
+    
+    func setMetadataScan(scanSize:CGRect? = nil, metadataObjectTypes:[AVMetadataObject.ObjectType], metadataDelegate:AVCaptureMetadataOutputObjectsDelegate){
+        metadataOutput.setMetadataObjectsDelegate(metadataDelegate, queue: DispatchQueue.main)
+        session.addOutput(metadataOutput)
+        metadataOutput.metadataObjectTypes = metadataObjectTypes
 
-        let windowSize = UIScreen.main.bounds
-        var scanRect = CGRect(x:(windowSize.width-scanSize.width)/2,
-                              y:(windowSize.height-scanSize.height)/2,
-                              width:scanSize.width, height:scanSize.height)
-        //计算rectOfInterest 注意x,y交换位置
-        scanRect = CGRect(x:scanSize.origin.y/windowSize.height,
-                          y:scanSize.origin.x/windowSize.width,
-                          width:scanSize.size.height/windowSize.height,
-                          height:scanSize.size.width/windowSize.width);
-        //设置可探测区域
-        qrCodeOutput.rectOfInterest = scanRect
+        if let size = scanSize{
+            let windowSize = UIScreen.main.bounds
+            var scanRect = CGRect(x:(windowSize.width-size.width)/2,
+                                  y:(windowSize.height-size.height)/2,
+                                  width:size.width, height:size.height)
+            //计算rectOfInterest 注意x,y交换位置
+            scanRect = CGRect(x:size.origin.y/windowSize.height,
+                              y:size.origin.x/windowSize.width,
+                              width:size.size.height/windowSize.height,
+                              height:size.size.width/windowSize.width);
+            //设置可探测区域
+            metadataOutput.rectOfInterest = scanRect
+        }
     }
     
     
@@ -72,13 +95,69 @@ class CameraSet {
         inView.layer.insertSublayer(previewLayer, at: 0)
     }
     
-    
-    func startRunning(){
-        self.session.startRunning()
+    func setSessionPreset(_ Preset:AVCaptureSession.Preset){
+        if (session.canSetSessionPreset(Preset)) {
+            session.sessionPreset = Preset
+        }
     }
     
-    func stopRunning(){
-        self.session.startRunning()
+    //控制闪光灯
+    func controlTorch(torchMode:AVCaptureDevice.TorchMode? = nil){
+        if let mode = torchMode , videoDevice?.torchMode != torchMode{
+            do {
+                try videoDevice?.lockForConfiguration()
+            } catch {
+                return
+            }
+            videoDevice?.torchMode = mode
+            videoDevice?.unlockForConfiguration()
+        }else{
+            if videoDevice?.torchMode == .on{
+                do {
+                    try videoDevice?.lockForConfiguration()
+                } catch {
+                    return
+                }
+                videoDevice?.torchMode = .off
+                videoDevice?.unlockForConfiguration()
+            }else {
+                do {
+                    try videoDevice?.lockForConfiguration()
+                } catch {
+                    return
+                }
+                videoDevice?.torchMode = .on
+                videoDevice?.unlockForConfiguration()
+            }
+        }
     }
     
+    //快门拍照
+    func shutter(photoCallBack:@escaping (UIImage)->Void){
+        
+        guard let conntion = photoOutput.connection(with: .video) else {
+            print("conntion error")
+            return
+        }
+        
+        photoOutput.captureStillImageAsynchronously(from: conntion, completionHandler: { (CMSampleBuffer, error) in
+            
+            guard CMSampleBuffer != nil else {
+                print("CMSampleBuffer error :\(String(describing: (error)))")
+                return
+            }
+            
+            guard let photoData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(CMSampleBuffer!) else {
+                print("image data error")
+                return
+            }
+            
+            guard let image = UIImage(data: photoData) else {
+                print("image transform error")
+                return
+            }
+            
+            photoCallBack(image)
+        })
+    }
 }

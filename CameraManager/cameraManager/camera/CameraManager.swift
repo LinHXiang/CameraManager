@@ -31,15 +31,24 @@ class CameraManager {
     }
     
     func cameraSetting(persistenceKey : String? = nil ,setting : @escaping (CameraSet) -> Void){
-        let set = CameraSet()
+        var set = CameraSet()
+        if let key = persistenceKey , let keySet = getCameraSet(key: key) {
+            set = keySet
+            set.queue = DispatchQueue(label: "cameraManager_\(key)")
+            set.stopRunning()
+        }
         setting(set)
         set.startRunning()
-        if let key = persistenceKey{
+        if let key = persistenceKey , getCameraSet(key: key) == nil{
             saveCameraSet(key: key, set: set)
         }
     }
     
-    
+}
+
+
+
+extension CameraManager {
     
     public class func checkDeviceCamera(types:[deviceType]) ->CameraManager?{
         if types.contains(.video){
@@ -62,6 +71,4 @@ class CameraManager {
         return CameraManager()
     }
     
-    
-
 }

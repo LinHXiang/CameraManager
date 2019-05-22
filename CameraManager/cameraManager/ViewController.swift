@@ -14,24 +14,29 @@ class ViewController: UIViewController,AVCaptureMetadataOutputObjectsDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        CameraManager.shareInstance?.cameraSetting(persistenceKey: "testCamera" , setting: { (set) in
-            set.setCamera(.back)
-            set.setScanQrcode(scanSize: self.view.frame, metadataDelegate: self)
-            set.setPreviewLayer(inView: self.view)
-        })
+        setface()
         
-        
-        
-        
-        if CameraManager.shareInstance?.getCameraSet(key: "testCamera") == nil {
-            print("nil")
-        }else{
-            print("已经存储")
-            print(CameraManager.shareInstance?.getCameraSet(key: "testCamera"))
-
-        }
     }
 
+    
+    
+    func setqrcode(){
+        CameraManager.shareInstance?.cameraSetting(persistenceKey: "qrcode", setting: { (set) in
+            set.setCamera(.back)
+            set.setMetadataScan(metadataObjectTypes: [.qr], metadataDelegate: self)
+            set.setPreviewLayer(inView: self.view)
+        })
+    }
+    
+    func setface(){
+        CameraManager.shareInstance?.cameraSetting(persistenceKey: "qrcode", setting: { (set) in
+            set.setCamera(.back)
+            set.setMetadataScan(metadataObjectTypes: [.face], metadataDelegate: self)
+            set.setPreviewLayer(inView: self.view)
+        })
+    }
+    
+    
     
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection){
         
