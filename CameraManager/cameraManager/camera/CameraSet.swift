@@ -9,25 +9,24 @@
 import AVFoundation
 import UIKit
 
-
-
 class CameraSet {
     
     public var videoDevice: AVCaptureDevice? = nil
-
+    
     public let session = AVCaptureSession()
-
+    
     public let photoOutput = AVCaptureStillImageOutput()
-
+    
     public let videoOutPut = AVCaptureVideoDataOutput()
-
+    
     public let metadataOutput = AVCaptureMetadataOutput()
-
+    
     public let previewLayer = AVCaptureVideoPreviewLayer()
     
     var queue = DispatchQueue(label: "cameraManager_default")
-
-    func startRunning(){
+    
+    func startRunning(inView : UIView,layerFrame:CGRect? = nil ,videoGravity:AVLayerVideoGravity = .resizeAspectFill){
+        self.setPreviewLayer(inView: inView, layerFrame: layerFrame, videoGravity: videoGravity)
         self.session.startRunning()
     }
     
@@ -61,7 +60,7 @@ class CameraSet {
         outPutSetting?(photoOutput)
     }
     
-    func setVideoOutPut(videoDataOutputDelegate:AVCaptureVideoDataOutputSampleBufferDelegate?,outPutSetting : ((AVCaptureVideoDataOutput) -> Void)? = nil){
+    func setVideoOutPut(videoDataOutputDelegate:AVCaptureVideoDataOutputSampleBufferDelegate? = nil,outPutSetting : ((AVCaptureVideoDataOutput) -> Void)? = nil){
         if session.canAddOutput(videoOutPut) {
             session.addOutput(videoOutPut)
         }
@@ -73,7 +72,7 @@ class CameraSet {
         metadataOutput.setMetadataObjectsDelegate(metadataDelegate, queue: DispatchQueue.main)
         session.addOutput(metadataOutput)
         metadataOutput.metadataObjectTypes = metadataObjectTypes
-
+        
         if let size = scanSize{
             let windowSize = UIScreen.main.bounds
             var scanRect = CGRect(x:(windowSize.width-size.width)/2,
@@ -89,9 +88,8 @@ class CameraSet {
         }
     }
     
-    
     //设置实时预览画面
-    func setPreviewLayer(inView : UIView,layerFrame:CGRect? = nil ,videoGravity:AVLayerVideoGravity = .resizeAspectFill){
+    fileprivate func setPreviewLayer(inView : UIView,layerFrame:CGRect? = nil ,videoGravity:AVLayerVideoGravity = .resizeAspectFill){
         previewLayer.session = self.session
         previewLayer.videoGravity = videoGravity
         previewLayer.frame = layerFrame ?? inView.bounds

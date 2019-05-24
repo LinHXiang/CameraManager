@@ -17,29 +17,26 @@ class ViewController: UIViewController,AVCaptureMetadataOutputObjectsDelegate {
         let set = CameraManager.cameraSetting { (set) in
             set.setCamera(.front)
             set.setMetadataScan(metadataObjectTypes: [.face], metadataDelegate: self)
-            set.setPreviewLayer(inView: self.view)
         }
         
-        set.startRunning()
+        set.startRunning(inView: self.view)
         
     }
 
     
     
     func setqrcode(){
-        CameraManager.shareInstance?.cameraSetting(persistenceKey: "qrcode", setting: { (set) in
+        CameraManager.cameraSetting(persistenceKey: "qrcode", setting: { (set) in
             set.setCamera(.back)
             set.setMetadataScan(metadataObjectTypes: [.qr], metadataDelegate: self)
-            set.setPreviewLayer(inView: self.view)
-        })
+        }).startRunning(inView: self.view)
     }
     
     func setface(){
-        CameraManager.shareInstance?.cameraSetting(persistenceKey: "qrcode", setting: { (set) in
+        CameraManager.cameraSetting(persistenceKey: "qrcode", setting: { (set) in
             set.setCamera(.front)
             set.setMetadataScan(metadataObjectTypes: [.face], metadataDelegate: self)
-            set.setPreviewLayer(inView: self.view)
-        })
+        }).startRunning(inView: self.view)
     }
     
     

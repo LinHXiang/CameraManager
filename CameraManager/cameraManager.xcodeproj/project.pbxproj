@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		6E27703E22928E72001BCA2E /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E27703D22928E72001BCA2E /* CameraManager.swift */; };
-		6E27704022928F1B001BCA2E /* CameraProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E27703F22928F1B001BCA2E /* CameraProtocol.swift */; };
 		6E27704222929203001BCA2E /* CameraSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E27704122929203001BCA2E /* CameraSet.swift */; };
 		9D3F2E38228EA09900F870E5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3F2E37228EA09900F870E5 /* AppDelegate.swift */; };
 		9D3F2E3A228EA09900F870E5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3F2E39228EA09900F870E5 /* ViewController.swift */; };
@@ -19,7 +18,6 @@
 
 /* Begin PBXFileReference section */
 		6E27703D22928E72001BCA2E /* CameraManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
-		6E27703F22928F1B001BCA2E /* CameraProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraProtocol.swift; sourceTree = "<group>"; };
 		6E27704122929203001BCA2E /* CameraSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSet.swift; sourceTree = "<group>"; };
 		9D3F2E34228EA09900F870E5 /* cameraManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cameraManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D3F2E37228EA09900F870E5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -46,7 +44,6 @@
 			children = (
 				6E27703D22928E72001BCA2E /* CameraManager.swift */,
 				6E27704122929203001BCA2E /* CameraSet.swift */,
-				6E27703F22928F1B001BCA2E /* CameraProtocol.swift */,
 			);
 			path = camera;
 			sourceTree = "<group>";
@@ -153,7 +150,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D3F2E3A228EA09900F870E5 /* ViewController.swift in Sources */,
-				6E27704022928F1B001BCA2E /* CameraProtocol.swift in Sources */,
 				6E27703E22928E72001BCA2E /* CameraManager.swift in Sources */,
 				6E27704222929203001BCA2E /* CameraSet.swift in Sources */,
 				9D3F2E38228EA09900F870E5 /* AppDelegate.swift in Sources */,
