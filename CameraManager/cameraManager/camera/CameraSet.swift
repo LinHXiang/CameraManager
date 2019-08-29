@@ -43,6 +43,9 @@ class CameraSet {
             }
         }
         if let device = videoDevice {
+            session.inputs.forEach { (each) in
+                session.removeInput(each)
+            }
             do {
                 let input = try AVCaptureDeviceInput(device:device)
                 session.addInput(input)

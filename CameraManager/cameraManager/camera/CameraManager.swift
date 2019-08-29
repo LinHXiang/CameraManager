@@ -27,6 +27,7 @@ class CameraManager {
             if let set = self.shareInstance?.getCameraSet(key: key){
                 cameraSet = set
                 cameraSet.stopRunning()
+                setting(cameraSet)
             }else{
                 setting(cameraSet)
                 cameraSet.queue = DispatchQueue(label: "cameraManager_\(key)")
