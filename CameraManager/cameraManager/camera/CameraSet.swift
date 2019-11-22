@@ -72,6 +72,9 @@ class CameraSet {
     }
     
     func setMetadataScan(scanSize:CGRect? = nil, metadataObjectTypes:[AVMetadataObject.ObjectType], metadataDelegate:AVCaptureMetadataOutputObjectsDelegate){
+        session.outputs.forEach { (each) in
+            session.removeOutput(each)
+        }
         metadataOutput.setMetadataObjectsDelegate(metadataDelegate, queue: DispatchQueue.main)
         session.addOutput(metadataOutput)
         metadataOutput.metadataObjectTypes = metadataObjectTypes
